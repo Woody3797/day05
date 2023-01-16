@@ -1,6 +1,7 @@
 package day03workshop;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.Console;
 import java.io.File;
 import java.io.FileReader;
@@ -71,7 +72,7 @@ public class App {
                 input = input.replace(",", " ");
                 Scanner scanner = new Scanner(input.substring(4));
 
-                FileWriter fw = new FileWriter(dirPath + File.separator + fileName);
+                FileWriter fw = new FileWriter(dirPath + File.separator + fileName, true);
                 PrintWriter pw = new PrintWriter(fw);
 
                 while (scanner.hasNext()) {
@@ -88,6 +89,7 @@ public class App {
 
             if (input.startsWith("delete")) {
                 cartItems = deleteCartItem(cartItems, input);
+                updateCartItemToFile(cartItems, dirPath, fileName);
             }
         }
     }
@@ -104,6 +106,20 @@ public class App {
         }
     }
 
+    public static void updateCartItemToFile(List<String> cartItems, String dirPath, String fileName) throws IOException {
+        FileWriter fw = new FileWriter(dirPath + File.separator + fileName, false);
+        BufferedWriter bw = new BufferedWriter(fw);
+
+        for (String item : cartItems) {
+            bw.write(item);
+            bw.newLine();
+        }
+        bw.flush();
+        fw.flush();
+        bw.close();
+        fw.close();
+    }
+
     public static List<String> deleteCartItem(List<String> cartItems, String input) {
         String strValue = "";
         Scanner scanner = new Scanner(input.substring(6));
@@ -112,7 +128,7 @@ public class App {
             strValue = scanner.next();
             int listItemIndex = Integer.parseInt(strValue);
 
-            if (listItemIndex < cartItems.size()) {
+            if (listItemIndex <= cartItems.size()) {
                 cartItems.remove(listItemIndex - 1);
             } else {
                 System.out.println("Incorrect item index");
@@ -123,14 +139,13 @@ public class App {
 
     public static String createLoginFile(String input, String dirPath, String fileName) throws IOException {
         input = input.replace(",", " ");
-
         Scanner scanner = new Scanner(input.substring(6));
 
         while (scanner.hasNext()) {
             fileName = scanner.next();
         }
         //define filepath and filename
-        File loginFile = new File(dirPath + File.separator + fileName + ".txt");
+        File loginFile = new File(dirPath + File.separator + fileName);
         boolean isCreated = loginFile.createNewFile();
 
         if (isCreated) {
