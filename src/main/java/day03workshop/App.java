@@ -2,6 +2,7 @@ package day03workshop;
 
 import java.io.Console;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -13,14 +14,15 @@ public class App {
     /**
      * Says hello to the world.
      * @param args The arguments of the program.
+     * @throws IOException
      */
-    
-    static String dirPath = "\\cartdata";
-    String fileName = "";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         
+        String dirPath = "./cartdata";
+        // instantiates a file/dir object
         File newDirectory = new File(dirPath);
+        String fileName = "";
 
         if(newDirectory.exists()) {
             System.out.println("Directory already exists");
@@ -43,17 +45,13 @@ public class App {
                     
                     break;
                 case "save":
+
                     break;
                 case "users":
+
                     break;
                 case "list":
-                    if (cartItems.size() > 0) {
-                        for (String item : cartItems) {
-                            System.out.println(item);
-                        }
-                    } else {
-                        System.out.println("Your cart is empty!");
-                    }
+                    listCart(cartItems);
                     break;
                 default:
                     System.out.println("""
@@ -65,9 +63,13 @@ public class App {
                     break;
             }
 
+            if (input.startsWith("login")) {
+                createLoginFile(input, dirPath, fileName);
+            }
+
+            String strValue = "";
             if (input.startsWith("add")) {
                 input = input.replace(",", " ");
-                String strValue = "";
                 Scanner scanner = new Scanner(input.substring(4));
 
                 while (scanner.hasNext()) {
@@ -75,6 +77,58 @@ public class App {
                     cartItems.add(strValue);
                 }
             }
+
+            if (input.startsWith("delete")) {
+                cartItems = deleteCartItem(cartItems, input);
+            }
+        }
+    }
+
+    public static void listCart(List<String> cartItems) {
+        if (cartItems.size() > 0) {
+            int count = 1;
+            for (String item : cartItems) {
+                System.out.println(count + ". " + item);
+                count++;
+            }
+        } else {
+            System.out.println("Your cart is empty!");
+        }
+    }
+
+    public static List<String> deleteCartItem(List<String> cartItems, String input) {
+        String strValue = "";
+        Scanner scanner = new Scanner(input.substring(6));
+
+        while (scanner.hasNext()) {
+            strValue = scanner.next();
+            int listItemIndex = Integer.parseInt(strValue);
+
+            if (listItemIndex < cartItems.size()) {
+                cartItems.remove(listItemIndex - 1);
+            } else {
+                System.out.println("Incorrect item index");
+            }
+        }
+        return cartItems;
+    }
+
+    public static void createLoginFile(String input, String dirPath, String fileName) throws IOException {
+        input = input.replace(",", " ");
+
+        Scanner scanner = new Scanner(input.substring(6));
+
+        while (scanner.hasNext()) {
+            fileName = scanner.next();
+        }
+        //define filepath and filename
+        File loginFile = new File(dirPath + File.separator + fileName + ".txt");
+        boolean isCreated = loginFile.createNewFile();
+
+        if (isCreated) {
+            System.out.println("New file created " + loginFile.getCanonicalPath());
+        } else {
+            System.out.println("File already created");
         }
     }
 }
