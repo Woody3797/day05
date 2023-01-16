@@ -1,8 +1,5 @@
 package day02workshop;
 
-/**
- * Hello world!
- */
 public final class App {
     private App() {
     }
