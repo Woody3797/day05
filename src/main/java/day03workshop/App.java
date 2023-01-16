@@ -1,8 +1,12 @@
 package day03workshop;
 
+import java.io.BufferedReader;
 import java.io.Console;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -41,16 +45,11 @@ public class App {
             input = cons.readLine("What do you want to perform? Type <quit> to exit program.\n");
 
             switch (input) {
-                case "login":
-                    
-                    break;
-                case "save":
-
-                    break;
                 case "users":
-
+                    listUsers(dirPath);
                     break;
                 case "list":
+                    cartItems = readCartItemsFromFile(dirPath, fileName);
                     listCart(cartItems);
                     break;
                 default:
@@ -64,7 +63,7 @@ public class App {
             }
 
             if (input.startsWith("login")) {
-                createLoginFile(input, dirPath, fileName);
+                fileName = createLoginFile(input, dirPath, fileName);
             }
 
             String strValue = "";
@@ -72,10 +71,19 @@ public class App {
                 input = input.replace(",", " ");
                 Scanner scanner = new Scanner(input.substring(4));
 
+                FileWriter fw = new FileWriter(dirPath + File.separator + fileName);
+                PrintWriter pw = new PrintWriter(fw);
+
                 while (scanner.hasNext()) {
                     strValue = scanner.next();
                     cartItems.add(strValue);
+                    pw.printf("%s\n", strValue);
                 }
+
+                pw.flush();
+                fw.flush();
+                pw.close();
+                fw.close();
             }
 
             if (input.startsWith("delete")) {
@@ -113,7 +121,7 @@ public class App {
         return cartItems;
     }
 
-    public static void createLoginFile(String input, String dirPath, String fileName) throws IOException {
+    public static String createLoginFile(String input, String dirPath, String fileName) throws IOException {
         input = input.replace(",", " ");
 
         Scanner scanner = new Scanner(input.substring(6));
@@ -130,5 +138,29 @@ public class App {
         } else {
             System.out.println("File already created");
         }
+
+        return fileName;
+    }
+
+    public static void listUsers(String dirPath) {
+        File directoryPath = new File(dirPath);
+
+        String[] contents = directoryPath.list();
+        for (String file : contents) {
+            System.out.println(file);
+        }
+    }
+
+    public static List<String> readCartItemsFromFile(String dirPath, String fileName) throws IOException {
+        File file = new File(dirPath + File.separator + fileName);
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String str;
+        List<String> items = new ArrayList<>();
+
+        while ((str = br.readLine()) != null) {
+            items.add(str);
+        }
+        br.close();
+        return items;
     }
 }
