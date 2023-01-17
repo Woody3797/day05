@@ -54,12 +54,7 @@ public class App {
                     listCart(cartItems);
                     break;
                 default:
-                    System.out.println("""
-                            > list to show a list of items in your shopping cart
-                            > login <name> to access your shopping cart
-                            > add <item> to add items into your shopping cart
-                            > delete <item #> to delete item from shopping cart
-                            > quit to exit this program """);
+                    System.out.println("> list to show a list of items in your shopping cart\n> login <name> to access your shopping cart\n> add <item> to add items into your shopping cart\n> delete <item #> to delete item from shopping cart\n> quit to exit this program");
                     break;
             }
 
